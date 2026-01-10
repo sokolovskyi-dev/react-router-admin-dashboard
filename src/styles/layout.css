@@ -1,0 +1,46 @@
+.container {
+  width: 100%;
+  max-width: calc(var(--container-max) + var(--container-pad) * 2);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.container.narrow {
+  --container-max: 960px;
+}
+
+.container.wide {
+  --container-max: 1440px;
+}
+
+.section {
+  padding-block: clamp(32px, 6vw, 72px);
+}
+
+.container > * + * {
+  margin-top: var(--gap);
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --container-max: 1440px;
+  }
+}
+
+@media (min-width: 1920px) {
+  :root {
+    --container-max: 1600px;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    --container-max: 1760px;
+  }
+}
+
+@media (min-width: 3440px) {
+  :root {
+    --container-max: 1920px;
+  }
+}

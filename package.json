@@ -1,0 +1,75 @@
+{
+  "name": "vite-react-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Modern Vite + React + SWC template with ESLint Flat Config, Prettier 3, Husky 9, lint-staged, alias @, Checker overlay, and full Node 20+ compatibility.",
+  "keywords": [
+    "vite",
+    "react",
+    "swc",
+    "eslint",
+    "prettier",
+    "template",
+    "boilerplate",
+    "frontend",
+    "javascript",
+    "starter"
+  ],
+  "author": "Serhii Sokolovskyi",
+  "license": "MIT",
+  "homepage": "https://sokolovskyi-dev.github.io/vite-react-template/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sokolovskyi-dev/vite-react-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sokolovskyi-dev/vite-react-template/issues"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "format": "prettier --write \"src/**/*.{js,jsx,css,json,md,html}\""
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,css,html,json,md}": [
+      "prettier --write"
+    ],
+    "src/**/*.{js,jsx}": [
+      "eslint --fix"
+    ]
+  },
+  "dependencies": {
+    "modern-normalize": "^3.0.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/eslint-parser": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
+    "@eslint/js": "^9.39.1",
+    "@vitejs/plugin-react-swc": "^4.2.1",
+    "eslint": "^9.39.1",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.6.2",
+    "vite": "^7.2.2",
+    "vite-plugin-checker": "^0.11.0"
+  }
+}
