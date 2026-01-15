@@ -15,7 +15,7 @@ export async function loginAction({ request }) {
   return redirect('/dashboard');
 }
 
-export default function loginPage() {
+export default function LoginPage() {
   const actionData = useActionData();
   return (
     <div style={{ padding: 24, maxWidth: 420 }}>
