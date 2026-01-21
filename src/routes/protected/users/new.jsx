@@ -1,7 +1,12 @@
+import { Form } from 'react-router-dom';
+
 export function Component() {
   return (
     <>
-      <h2>New</h2>
+      <h1>New</h1>
+      <Form>
+        <button type="submit">Create new user</button>
+      </Form>
     </>
   );
 }
