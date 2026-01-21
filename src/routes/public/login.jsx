@@ -2,7 +2,7 @@ import { data, Form, redirect, useActionData } from 'react-router-dom';
 
 import { createSession } from '@/api/auth';
 
-export async function loginAction({ request }) {
+export async function action({ request }) {
   const formData = await request.formData();
   const email = String(formData.get('email') || '').trim();
 
