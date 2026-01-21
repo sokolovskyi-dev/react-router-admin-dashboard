@@ -1,4 +1,4 @@
-import { data, Form, redirect, useActionData } from 'react-router-dom';
+import { data, Form, redirect, useActionData, useNavigation } from 'react-router-dom';
 
 import { createSession } from '@/api/auth';
 
@@ -15,11 +15,12 @@ export async function action({ request }) {
   return redirect('/dashboard');
 }
 
-export default function LoginPage() {
+export function Component() {
+  const navigation = useNavigation();
   const actionData = useActionData();
   return (
     <div style={{ padding: 24, maxWidth: 420 }}>
-      <h1>Loading</h1>
+      {navigation.state !== 'idle' && <h1>Loading</h1>}
 
       <Form method="post" replace>
         <label style={{ display: 'block' }}>

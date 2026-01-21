@@ -3,9 +3,7 @@ import { Outlet } from 'react-router-dom';
 export function Component() {
   return (
     <>
-      <header>Header</header>
-      <nav>Nav</nav>
-
+      <h1>UsersLayout</h1>
       <Outlet />
     </>
   );
