@@ -101,3 +101,7 @@ video {
     scroll-behavior: auto !important;
   }
 }
+
+.active {
+  color: rgb(255, 140, 0);
+}
