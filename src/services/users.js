@@ -1,4 +1,4 @@
-let USERS = Array.from({ length: 20 }, (_, i) => ({
+const USERS = Array.from({ length: 20 }, (_, i) => ({
   id: String(i + 1),
   name: `User${i + 1}`,
   email: `user${i + 1}@mail.com`,

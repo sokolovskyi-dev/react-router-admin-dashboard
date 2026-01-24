@@ -1,6 +1,14 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLoaderData } from 'react-router-dom';
+
+import { getUsers } from '@/services/users';
+
+export async function loader() {
+  const users = await getUsers();
+  return { users };
+}
 
 export function Component() {
+  const { users } = useLoaderData();
   return (
     <>
       <div style={{ display: 'flex', gap: 40 }}>
@@ -12,27 +20,19 @@ export function Component() {
         >
           <h3>Users</h3>
           <ul>
-            <li>
-              <NavLink to="1">User-1</NavLink>
-            </li>
-            <li>
-              <NavLink to="2">User-2</NavLink>
-            </li>
-            <li>
-              <NavLink to="3">User-3</NavLink>
-            </li>
-            <li>
-              <NavLink to="4">User-4</NavLink>
-            </li>
-            <li>
-              <NavLink to="5">User-5</NavLink>
-            </li>
+            {users.map(user => (
+              <li key={user.id} style={{ borderBottom: '1px solid grey' }}>
+                <NavLink to={user.id}>
+                  {user.name} {user.active ? '🟢' : '🔴'}
+                </NavLink>
+              </li>
+            ))}
           </ul>
 
           <hr />
 
-          <NavLink to="new">
-            <button style={{ marginTop: 20 }}>➕ New user</button>
+          <NavLink to="new" end>
+            ➕ New user
           </NavLink>
         </aside>
 
