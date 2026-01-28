@@ -1,22 +1,26 @@
 import { nanoid } from 'nanoid';
 
-import { readUsers, writeUsers } from './storage/users';
+import { addUser, readUsers, writeUsers } from './storage/users';
 
-const USERS =
-  readUsers() ||
-  Array.from({ length: 20 }, (_, i) => ({
-    id: String(i + 1),
-    name: `User${i + 1}`,
-    email: `user${i + 1}@mail.com`,
-    active: Math.random() > 0.3,
-  }));
+const existing = readUsers();
+if (existing.length === 0) {
+  writeUsers(
+    Array.from({ length: 20 }, (_, i) => ({
+      id: String(i + 1),
+      name: `User${i + 1}`,
+      email: `user${i + 1}@mail.com`,
+      active: Math.random() > 0.3,
+    }))
+  );
+}
 
 export async function getUsers() {
-  return USERS;
+  return readUsers();
 }
 
 export async function getUser(id) {
-  const user = USERS.find(u => u.id === id);
+  const users = readUsers();
+  const user = users.find(u => u.id === id);
 
   if (!user) {
     const error = new Error('User not found');
@@ -42,8 +46,31 @@ export async function createUser(payload) {
     active: false,
   };
 
-  USERS.push(newUser);
-  writeUsers(USERS);
+  addUser(newUser);
 
   return newUser;
+}
+
+export async function updateUser(id, patch) {
+  const users = await getUsers();
+  const user = users.find(u => u.id === id);
+  if (!user) {
+    const error = new Error('User not found');
+    error.status = 404;
+    throw error;
+  }
+
+  const updatedUser = { ...user, ...patch };
+
+  const nextUsers = users.map(user => (user.id === id ? updatedUser : user));
+  writeUsers(nextUsers);
+
+  return updatedUser;
+}
+
+export function validateUser({ name, email }) {
+  return {
+    name: name ? null : 'Name is required',
+    email: email ? null : 'Email is required',
+  };
 }
