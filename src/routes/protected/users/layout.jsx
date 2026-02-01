@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useLoaderData } from 'react-router-dom';
+import { NavLink, Outlet, useFetcher, useLoaderData } from 'react-router-dom';
 
 import { getUsers } from '@/services/users';
 
@@ -9,6 +9,8 @@ export async function loader() {
 
 export function Component() {
   const { users } = useLoaderData();
+  const fetcher = useFetcher();
+
   return (
     <>
       <div style={{ display: 'flex', gap: 40 }}>
@@ -25,6 +27,11 @@ export function Component() {
                 <NavLink to={user.id}>
                   {user.name} {user.active ? '🟢' : '🔴'}
                 </NavLink>
+                <fetcher.Form method="post">
+                  <button name="toggleActive" style={{ padding: 2, margin: 6 }}>
+                    {user.active ? 'Disable' : 'Enable'}
+                  </button>
+                </fetcher.Form>
               </li>
             ))}
           </ul>
