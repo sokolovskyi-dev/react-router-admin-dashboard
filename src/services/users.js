@@ -74,3 +74,19 @@ export function validateUser({ name, email }) {
     email: email ? null : 'Email is required',
   };
 }
+
+export async function updateUserActive(id) {
+  const users = await getUsers();
+  const user = users.find(u => u.id === id);
+
+  if (!user) {
+    const error = new Error('User not found');
+    error.status = 404;
+    throw error;
+  }
+  const updatedUser = { ...user, active: !user.active };
+  const nextUsers = users.map(u => (u.id === id ? updatedUser : u));
+  writeUsers(nextUsers);
+
+  return updatedUser;
+}

@@ -1,15 +1,28 @@
-import { NavLink, Outlet, useFetcher, useLoaderData } from 'react-router-dom';
+import { data, NavLink, Outlet, useFetcher, useLoaderData } from 'react-router-dom';
 
-import { getUsers } from '@/services/users';
+import { getUsers, updateUserActive } from '@/services/users';
 
 export async function loader() {
   const users = await getUsers();
   return { users };
 }
+export async function action({ request }) {
+  const formData = await request.formData();
+  const userId = formData.get('userId');
+  // const active = formData.get('active') === 'true';
+
+  try {
+    await updateUserActive(userId);
+  } catch (e) {
+    console.error(e);
+    throw data({ message: e.message }, { status: e.status });
+  }
+
+  return null;
+}
 
 export function Component() {
   const { users } = useLoaderData();
-  const fetcher = useFetcher();
 
   return (
     <>
@@ -23,16 +36,7 @@ export function Component() {
           <h3>Users</h3>
           <ul>
             {users.map(user => (
-              <li key={user.id} style={{ borderBottom: '1px solid grey' }}>
-                <NavLink to={user.id}>
-                  {user.name} {user.active ? '🟢' : '🔴'}
-                </NavLink>
-                <fetcher.Form method="post">
-                  <button name="toggleActive" style={{ padding: 2, margin: 6 }}>
-                    {user.active ? 'Disable' : 'Enable'}
-                  </button>
-                </fetcher.Form>
-              </li>
+              <UserRow key={user.id} user={user} />
             ))}
           </ul>
 
@@ -52,3 +56,28 @@ export function Component() {
 }
 
 Component.displayName = 'UsersLayout';
+
+function UserRow({ user }) {
+  const fetcher = useFetcher();
+  const isSubmitting = fetcher.state !== 'idle';
+  const optimisticActive = fetcher.formData
+    ? fetcher.formData.get('active') === 'true'
+    : user.active;
+
+  return (
+    <li style={{ borderBottom: '1px solid grey' }}>
+      <NavLink to={user.id}>
+        {user.name} {isSubmitting ? '⏳' : null}
+        {optimisticActive ? '🟢' : '🔴'}
+      </NavLink>
+      <fetcher.Form method="post">
+        <input type="hidden" name="userId" value={user.id} />
+        <input type="hidden" name="active" value={String(!user.active)} />
+
+        <button type="submit" style={{ padding: 2, margin: 6 }} disabled={isSubmitting}>
+          {optimisticActive ? 'Disable' : 'Enable'}
+        </button>
+      </fetcher.Form>
+    </li>
+  );
+}
