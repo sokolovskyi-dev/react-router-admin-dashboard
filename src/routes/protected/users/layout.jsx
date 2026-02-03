@@ -9,7 +9,6 @@ export async function loader() {
 export async function action({ request }) {
   const formData = await request.formData();
   const userId = formData.get('userId');
-  // const active = formData.get('active') === 'true';
 
   try {
     await updateUserActive(userId);
