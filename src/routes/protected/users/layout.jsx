@@ -1,6 +1,6 @@
 import { data, NavLink, Outlet, useFetcher, useLoaderData } from 'react-router-dom';
 
-import { getUsers, updateUserActive } from '@/services/users';
+import { getUsers, toggleUserActive } from '@/services/users';
 
 export async function loader() {
   const users = await getUsers();
@@ -8,16 +8,17 @@ export async function loader() {
 }
 export async function action({ request }) {
   const formData = await request.formData();
+  const intent = formData.get('intent');
   const userId = formData.get('userId');
+  if (intent !== 'toggleActive') return null;
 
   try {
-    await updateUserActive(userId);
+    await toggleUserActive(userId);
+    return null;
   } catch (e) {
     console.error(e);
-    throw data({ message: e.message }, { status: e.status });
+    return data({ error: e?.message ?? 'Failed to toggle user' }, { status: e?.status ?? 500 });
   }
-
-  return null;
 }
 
 export function Component() {
@@ -58,25 +59,36 @@ Component.displayName = 'UsersLayout';
 
 function UserRow({ user }) {
   const fetcher = useFetcher();
-  const isSubmitting = fetcher.state !== 'idle';
-  const optimisticActive = fetcher.formData
-    ? fetcher.formData.get('active') === 'true'
-    : user.active;
+
+  // ✅ optimistic только во время submit
+  const isSubmitting = fetcher.state === 'submitting';
+
+  let active = user.active;
+  if (isSubmitting && fetcher.formData) {
+    active = fetcher.formData.get('active') === 'true';
+  }
+
+  const error = fetcher.data?.error;
 
   return (
-    <li style={{ borderBottom: '1px solid grey' }}>
-      <NavLink to={user.id}>
-        {user.name} {isSubmitting ? '⏳' : null}
-        {optimisticActive ? '🟢' : '🔴'}
-      </NavLink>
-      <fetcher.Form method="post">
-        <input type="hidden" name="userId" value={user.id} />
-        <input type="hidden" name="active" value={String(!user.active)} />
+    <li style={{ borderBottom: '1px solid grey', padding: '6px 0' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <NavLink to={user.id} style={{ flex: 1 }}>
+          {user.name} {isSubmitting ? '⏳' : null} {active ? '🟢' : '🔴'}
+        </NavLink>
 
-        <button type="submit" style={{ padding: 2, margin: 6 }} disabled={isSubmitting}>
-          {optimisticActive ? 'Disable' : 'Enable'}
-        </button>
-      </fetcher.Form>
+        <fetcher.Form method="post">
+          <input type="hidden" name="intent" value="toggleActive" />
+          <input type="hidden" name="userId" value={user.id} />
+          <input type="hidden" name="active" value={String(!user.active)} />
+
+          <button type="submit" disabled={isSubmitting}>
+            {active ? 'Disable' : 'Enable'}
+          </button>
+        </fetcher.Form>
+      </div>
+
+      {error ? <p style={{ margin: '6px 0 0', color: 'crimson' }}>{error}</p> : null}
     </li>
   );
 }

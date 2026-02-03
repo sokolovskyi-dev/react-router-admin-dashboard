@@ -75,7 +75,7 @@ export function validateUser({ name, email }) {
   };
 }
 
-export async function updateUserActive(id) {
+export async function toggleUserActive(id) {
   const users = await getUsers();
   const user = users.find(u => u.id === id);
 
