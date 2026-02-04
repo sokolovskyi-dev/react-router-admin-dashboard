@@ -1,4 +1,12 @@
-import { data, NavLink, Outlet, useFetcher, useLoaderData } from 'react-router-dom';
+import {
+  data,
+  isRouteErrorResponse,
+  NavLink,
+  Outlet,
+  useFetcher,
+  useLoaderData,
+  useRouteError,
+} from 'react-router-dom';
 
 import { getUsers, toggleUserActive } from '@/services/users';
 
@@ -91,4 +99,25 @@ function UserRow({ user }) {
       {error ? <p style={{ margin: '6px 0 0', color: 'crimson' }}>{error}</p> : null}
     </li>
   );
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 401) return <h1>Unauthorized</h1>;
+    if (error.status === 404) return <h1>Not Found</h1>;
+    if (error.status === 500) return <h1>Failed to load users</h1>;
+    return (
+      <h1>
+        {error.status} {error.statusText}
+      </h1>
+    );
+  }
+
+  if (error instanceof Error) {
+    return <pre style={{ padding: 16 }}>{error.message}</pre>;
+  }
+
+  return <h1>Unknown! Something went wrong</h1>;
 }

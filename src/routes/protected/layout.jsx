@@ -1,4 +1,12 @@
-import { Form, NavLink, Outlet, redirect, useNavigation } from 'react-router-dom';
+import {
+  Form,
+  isRouteErrorResponse,
+  NavLink,
+  Outlet,
+  redirect,
+  useNavigation,
+  useRouteError,
+} from 'react-router-dom';
 
 import { getSession, logout } from '@/services/auth';
 
@@ -40,3 +48,23 @@ export function Component() {
 }
 
 Component.displayName = 'ProtectedLayout';
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 401 || error.status === 403) return <h1>Unauthorized</h1>;
+    if (error.status === 404) return <h1>Not Found</h1>;
+    return (
+      <h1>
+        {error.status} {error.statusText}
+      </h1>
+    );
+  }
+
+  if (error instanceof Error) {
+    return <pre style={{ padding: 16 }}>{error.message}</pre>;
+  }
+
+  return <h1>Unknown! Something went wrong</h1>;
+}

@@ -15,6 +15,12 @@ if (existing.length === 0) {
 }
 
 export async function getUsers() {
+  // if (Math.random() < 0.3) {
+  //   const error = new Error('Simulated users API failure');
+  //   error.status = 500;
+  //   throw error;
+  // }
+
   return readUsers();
 }
 
