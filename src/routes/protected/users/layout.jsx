@@ -5,6 +5,7 @@ import {
   Outlet,
   useFetcher,
   useLoaderData,
+  useNavigation,
   useRouteError,
 } from 'react-router-dom';
 
@@ -31,6 +32,7 @@ export async function action({ request }) {
 
 export function Component() {
   const { users } = useLoaderData();
+  const navigation = useNavigation();
 
   return (
     <>
@@ -42,6 +44,9 @@ export function Component() {
           }}
         >
           <h3>Users</h3>
+
+          {navigation.state === 'loading' ? <span>...Loading</span> : null}
+
           <ul>
             {users.map(user => (
               <UserRow key={user.id} user={user} />

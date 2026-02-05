@@ -4,6 +4,7 @@ import {
   NavLink,
   Outlet,
   redirect,
+  ScrollRestoration,
   useNavigation,
   useRouteError,
 } from 'react-router-dom';
@@ -25,6 +26,7 @@ export function Component() {
   const navigation = useNavigation();
   return (
     <>
+      <ScrollRestoration />
       <header style={{ padding: 20, display: 'flex', alignItems: 'center' }}>
         <nav style={{ display: 'flex', gap: 12 }}>
           <NavLink to="/dashboard">Dashboard</NavLink>
@@ -32,7 +34,9 @@ export function Component() {
           {/* <NavLink to="/login">Login</NavLink> */}
         </nav>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center' }}>
-          {navigation.state !== 'idle' ? <span>...Loading</span> : null}
+          {navigation.state === 'loading' ? <span>...Loading</span> : null}
+          {navigation.state === 'submitting' ? <span>...Saving</span> : null}
+
           <Form method="post">
             <button type="submit">Logout</button>
           </Form>
