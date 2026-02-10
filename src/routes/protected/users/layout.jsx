@@ -86,7 +86,7 @@ function UserRow({ user }) {
   return (
     <li style={{ borderBottom: '1px solid grey', padding: '6px 0' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <NavLink to={user.id} style={{ flex: 1 }}>
+        <NavLink to={user.id} prefetch="intent" style={{ flex: 1 }}>
           {user.name} {isSubmitting ? '⏳' : null} {active ? '🟢' : '🔴'}
         </NavLink>
 

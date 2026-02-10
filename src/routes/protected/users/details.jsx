@@ -24,7 +24,9 @@ export function Component() {
   return (
     <>
       <h2>Details user {user.id}</h2>
-      <Link to={`/users/${user.id}/edit`}>Edit</Link>
+      <Link to={`/users/${user.id}/edit`} prefetch="intent">
+        Edit
+      </Link>
     </>
   );
 }
