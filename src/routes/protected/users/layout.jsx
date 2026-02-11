@@ -11,10 +11,30 @@ import {
 
 import { getUsers, toggleUserActive } from '@/services/users';
 
-export async function loader() {
-  const users = await getUsers();
-  return { users };
+export async function loader({ request }) {
+  const url = new URL(request.url);
+  const { searchParams } = url;
+  const status = searchParams.get('status') ?? 'all';
+  const q = searchParams.get('q') ?? '';
+
+  const users = await getUsers({ signal: request.signal });
+
+  const filteredUsers = users.filter(user => {
+    const matchesStatus =
+      status === 'all' ||
+      (status === 'active' && user.active) ||
+      (status === 'inactive' && !user.active);
+
+    const matchesQuery =
+      user.name.toLowerCase().includes(q.toLowerCase()) ||
+      user.email.toLowerCase().includes(q.toLowerCase());
+
+    return matchesStatus && matchesQuery;
+  });
+
+  return { users: filteredUsers, filters: { status, q } };
 }
+
 export async function action({ request }) {
   const formData = await request.formData();
   const intent = formData.get('intent');
@@ -31,7 +51,7 @@ export async function action({ request }) {
 }
 
 export function Component() {
-  const { users } = useLoaderData();
+  const { users, filters } = useLoaderData();
   const navigation = useNavigation();
 
   return (
@@ -43,6 +63,8 @@ export function Component() {
             padding: '12px',
           }}
         >
+          <h3>Filter</h3>
+
           <h3>Users</h3>
 
           {navigation.state === 'loading' ? <span>...Loading</span> : null}
