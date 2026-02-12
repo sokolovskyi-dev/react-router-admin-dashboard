@@ -1,5 +1,6 @@
 import {
   data,
+  Form,
   isRouteErrorResponse,
   NavLink,
   Outlet,
@@ -7,6 +8,8 @@ import {
   useLoaderData,
   useNavigation,
   useRouteError,
+  useSearchParams,
+  // useSubmit,
 } from 'react-router-dom';
 
 import { getUsers, toggleUserActive } from '@/services/users';
@@ -18,6 +21,7 @@ export async function loader({ request }) {
   const q = searchParams.get('q') ?? '';
 
   const users = await getUsers({ signal: request.signal });
+    const query = q.trim().toLowerCase();
 
   const filteredUsers = users.filter(user => {
     const matchesStatus =
@@ -25,9 +29,11 @@ export async function loader({ request }) {
       (status === 'active' && user.active) ||
       (status === 'inactive' && !user.active);
 
-    const matchesQuery =
-      user.name.toLowerCase().includes(q.toLowerCase()) ||
-      user.email.toLowerCase().includes(q.toLowerCase());
+  
+   const matchesQuery =
+  !query ||
+  user.name.toLowerCase().includes(query) ||
+  user.email.toLowerCase().includes(query);
 
     return matchesStatus && matchesQuery;
   });
@@ -53,6 +59,27 @@ export async function action({ request }) {
 export function Component() {
   const { users, filters } = useLoaderData();
   const navigation = useNavigation();
+const [, setSearchParams] = useSearchParams();
+  // const submit = useSubmit();
+
+function handleFilterChange(e){
+  const form = e.currentTarget;
+  const formData= new FormData(form)
+
+   const status = String(formData.get('status') ?? 'all');
+    const q = String(formData.get('q') ?? '').trim();
+
+  const nextParams = new URLSearchParams();
+
+  if(status && status !== "all"){nextParams.set('status', status)}
+
+   if (q) {
+    nextParams.set('q', q);
+  }
+
+  setSearchParams(nextParams, { replace: true });
+
+}
 
   return (
     <>
@@ -64,6 +91,16 @@ export function Component() {
           }}
         >
           <h3>Filter</h3>
+          <Form method="get" onChange={handleFilterChange} style={{margin: '15px 0'}}>
+            <select name="status" defaultValue={filters.status}>
+              <option value="all">All</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+            <input name="q" defaultValue={filters.q} />
+          </Form>
+
+          <hr />
 
           <h3>Users</h3>
 
@@ -148,3 +185,5 @@ export function ErrorBoundary() {
 
   return <h1>Unknown! Something went wrong</h1>;
 }
+
+
