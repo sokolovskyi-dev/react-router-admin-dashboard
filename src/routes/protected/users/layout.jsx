@@ -16,12 +16,13 @@ import { getUsers, toggleUserActive } from '@/services/users';
 
 export async function loader({ request }) {
   const url = new URL(request.url);
+
   const { searchParams } = url;
   const status = searchParams.get('status') ?? 'all';
   const q = searchParams.get('q') ?? '';
 
   const users = await getUsers({ signal: request.signal });
-    const query = q.trim().toLowerCase();
+  const query = q.trim().toLowerCase();
 
   const filteredUsers = users.filter(user => {
     const matchesStatus =
@@ -29,11 +30,8 @@ export async function loader({ request }) {
       (status === 'active' && user.active) ||
       (status === 'inactive' && !user.active);
 
-  
-   const matchesQuery =
-  !query ||
-  user.name.toLowerCase().includes(query) ||
-  user.email.toLowerCase().includes(query);
+    const matchesQuery =
+      !query || user.name.toLowerCase().includes(query) || user.email.toLowerCase().includes(query);
 
     return matchesStatus && matchesQuery;
   });
@@ -59,27 +57,25 @@ export async function action({ request }) {
 export function Component() {
   const { users, filters } = useLoaderData();
   const navigation = useNavigation();
-const [, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
   // const submit = useSubmit();
 
-function handleFilterChange(e){
-  const form = e.currentTarget;
-  const formData= new FormData(form)
+  function handleFilterChange(e) {
+    const form = e.currentTarget;
+    const formData = new FormData(form);
 
-   const status = String(formData.get('status') ?? 'all');
+    const status = String(formData.get('status') ?? 'all');
     const q = String(formData.get('q') ?? '').trim();
-
-  const nextParams = new URLSearchParams();
-
-  if(status && status !== "all"){nextParams.set('status', status)}
-
-   if (q) {
-    nextParams.set('q', q);
+    const nextParams = new URLSearchParams();
+    if (status && status !== 'all') {
+      nextParams.set('status', status);
+    }
+    if (q) {
+      nextParams.set('q', q);
+    }
+    console.log(nextParams);
+    setSearchParams(nextParams, { replace: true });
   }
-
-  setSearchParams(nextParams, { replace: true });
-
-}
 
   return (
     <>
@@ -91,13 +87,13 @@ function handleFilterChange(e){
           }}
         >
           <h3>Filter</h3>
-          <Form method="get" onChange={handleFilterChange} style={{margin: '15px 0'}}>
+          <Form method="get" onChange={handleFilterChange} style={{ margin: '15px 0' }}>
             <select name="status" defaultValue={filters.status}>
               <option value="all">All</option>
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
-            <input name="q" defaultValue={filters.q} />
+            <input name="q" type="search" defaultValue={filters.q} />
           </Form>
 
           <hr />
@@ -185,5 +181,3 @@ export function ErrorBoundary() {
 
   return <h1>Unknown! Something went wrong</h1>;
 }
-
-
