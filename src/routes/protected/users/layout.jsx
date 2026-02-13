@@ -73,7 +73,7 @@ export function Component() {
     if (q) {
       nextParams.set('q', q);
     }
-    console.log(nextParams);
+
     setSearchParams(nextParams, { replace: true });
   }
 
