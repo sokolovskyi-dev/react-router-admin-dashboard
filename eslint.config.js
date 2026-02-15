@@ -46,7 +46,13 @@ export default [
 
     settings: {
       react: { version: 'detect' },
+
+      // ✅ FIX: node resolver + alias resolver together
       'import/resolver': {
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+        },
+
         alias: {
           map: [['@', './src']],
           extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
@@ -61,43 +67,44 @@ export default [
       ...jsxA11y.configs.recommended.rules,
       ...importPlugin.configs.recommended.rules,
 
-      // Import resolving (keep your ignore for absolute-like paths)
+      // Import resolving
       'import/no-unresolved': ['error', { ignore: ['^/'] }],
 
       // Use simple-import-sort instead of import/order
       'import/order': 'off',
+
       'simple-import-sort/imports': [
         'error',
         {
           groups: [
-            ['^react$', '^react-dom$'], // React first
-            ['^@?\\w'], // packages
-            ['^@/'], // alias
-            ['^\\.\\.(?!/?$)', '^\\.\\./?$'], // parent
-            ['^\\./(?!/?$)', '^\\./?$'], // same dir
-            ['^.+\\.s?css$'], // styles
-            ['^.+\\.(png|jpe?g|svg|gif|webp)$'], // assets
+            ['^react$', '^react-dom$'],
+            ['^@?\\w'],
+            ['^@/'],
+            ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
+            ['^\\./(?!/?$)', '^\\./?$'],
+            ['^.+\\.s?css$'],
+            ['^.+\\.(png|jpe?g|svg|gif|webp)$'],
           ],
         },
       ],
+
       'simple-import-sort/exports': 'error',
 
-      // Fast refresh warning is OK for component-only files
+      // Fast refresh
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
-      // React 17+ JSX transform
+      // React modern JSX
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
 
       'no-invalid-this': 'error',
 
-      // Prettier as lint rule
+      // Prettier integration
       'prettier/prettier': 'error',
     },
   },
 
-  // 4) React Router route-modules export action/loader + component in one file.
-  // Disable Fast Refresh rule only for routes.
+  // 4) React Router route-modules support
   {
     files: ['src/routes/**/*.{js,jsx,ts,tsx}', 'src/app/routes/**/*.{js,jsx,ts,tsx}'],
     rules: {
