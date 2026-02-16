@@ -23,10 +23,14 @@ export async function getUsers() {
   //   throw error;
   // }
 
+  await new Promise(r => setTimeout(r, 1000));
+
   return readUsers();
 }
 
 export async function getUser(id) {
+  await new Promise(r => setTimeout(r, 1000));
+
   const users = readUsers();
   const user = users.find(u => u.id === id);
 

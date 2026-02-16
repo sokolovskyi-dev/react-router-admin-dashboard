@@ -1,4 +1,12 @@
-import { data, isRouteErrorResponse, Link, useLoaderData, useRouteError } from 'react-router-dom';
+import {
+  data,
+  isRouteErrorResponse,
+  Link,
+  useLoaderData,
+  useNavigation,
+  // useParams,
+  useRouteError,
+} from 'react-router-dom';
 
 import { getUser } from '@/services/users';
 
@@ -20,10 +28,18 @@ export function Component() {
   // const { userId } = useParams();
   const { user } = useLoaderData();
   // const { name, email, active } = user;
+  const navigation = useNavigation();
+  const nextPath = navigation.location?.pathname;
+
+  const currentPath = `/users/${user.id}`;
+  const isLoadingOtherUser =
+    navigation.state === 'loading' && nextPath?.startsWith('/users/') && nextPath !== currentPath;
 
   return (
     <>
       <h2>Details user {user.id}</h2>
+      {isLoadingOtherUser ? <p>Loading user…</p> : null}
+
       <Link to={`/users/${user.id}/edit`} prefetch="intent">
         Edit
       </Link>
