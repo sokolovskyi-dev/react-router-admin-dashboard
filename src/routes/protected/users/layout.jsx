@@ -6,6 +6,8 @@ import {
   Outlet,
   useFetcher,
   useLoaderData,
+  useLocation,
+  useNavigate,
   useNavigation,
   useRouteError,
   useSearchParams,
@@ -55,6 +57,9 @@ export async function action({ request }) {
 }
 
 export function Component() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isModal = location.pathname.endsWith('/new');
   const { users, filters } = useLoaderData();
   const navigation = useNavigation();
   const [, setSearchParams] = useSearchParams();
@@ -114,11 +119,32 @@ export function Component() {
             ➕ New user
           </NavLink>
         </aside>
-
-        <section style={{ padding: '16px' }}>
-          <Outlet />
-        </section>
+        {!isModal && (
+          <section style={{ padding: '16px' }}>
+            <Outlet />
+          </section>
+        )}
       </div>
+
+      {isModal && (
+        <div
+          onClick={() => navigate(-1)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.4)',
+            display: 'grid',
+            placeItems: 'center',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ background: '#fff', padding: 20, borderRadius: 12, width: 500 }}
+          >
+            <Outlet />
+          </div>
+        </div>
+      )}
     </>
   );
 }

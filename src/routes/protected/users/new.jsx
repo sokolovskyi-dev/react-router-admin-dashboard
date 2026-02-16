@@ -2,8 +2,10 @@ import {
   data,
   Form,
   isRouteErrorResponse,
+  Link,
   redirect,
   useActionData,
+  useNavigate,
   useNavigation,
   useRouteError,
 } from 'react-router-dom';
@@ -35,9 +37,14 @@ export async function action({ request }) {
 export function Component() {
   const navigation = useNavigation();
   const actionData = useActionData();
+  const navigate = useNavigate();
 
   return (
     <>
+      <Link to=".." relative="path">
+        ✕ Close
+      </Link>
+      <button onClick={() => navigate(-1)}>Close</button>
       <h1>New</h1>
       <Form method="post">
         <div>
