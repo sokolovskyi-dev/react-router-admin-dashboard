@@ -166,7 +166,7 @@ function UserRow({ user }) {
   const fetcher = useFetcher();
 
   // ✅ optimistic только во время submit
-  const isSubmitting = fetcher.state === 'submitting';
+  const isSubmitting = fetcher.state === 'submitting' || fetcher.state === 'loading';
 
   let active = user.active;
   if (isSubmitting && fetcher.formData) {
