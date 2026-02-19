@@ -128,7 +128,16 @@ export function Component() {
 
       {isModal && (
         <div
-          onClick={() => navigate(-1)}
+          role="button"
+          tabIndex={-1}
+          aria-label="Close modal"
+          onClick={e => {
+            if (e.target === e.currentTarget) navigate(-1);
+          }}
+          onKeyDown={e => {
+            if (e.key === 'Escape') navigate(-1);
+            if (e.key === 'Enter' || e.key === ' ') navigate(-1);
+          }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -138,7 +147,9 @@ export function Component() {
           }}
         >
           <div
-            onClick={e => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            // onClick={e => e.stopPropagation()}
             style={{ background: '#fff', padding: 20, borderRadius: 12, width: 500 }}
           >
             <Outlet />
